@@ -1,0 +1,24 @@
+{
+  "name": "todo-mvvm",
+  "version": "1.0.0",
+  "description": "To-Do List usando arquitetura MVVM (Model-View-ViewModel)",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon ./index.js localhost 3001"
+  },
+  "keywords": [
+    "mvvm",
+    "todo",
+    "nodejs"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "custom-env": "^2.0.2",
+    "express": "^4.18.2",
+    "express-handlebars": "^7.0.7",
+    "mysql2": "^3.2.4",
+    "nodemon": "^2.0.22",
+    "sequelize": "^6.31.1"
+  }
+}

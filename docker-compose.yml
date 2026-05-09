@@ -1,0 +1,107 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: todo-m
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: todo_app
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - todo-network
+    healthcheck:
+      test:
+        ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  todo-mvc:
+    build:
+      context: ./ToDo-MVC
+      dockerfile: ../Dockerfile.node
+    container_name: todo-mvc
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      DB_NAME: todo_app
+      DB_USER: root
+      DB_PASS: root123
+      DB_HOST: mysql
+      PORT: 3000
+    volumes:
+      - ./ToDo-MVC:/app
+      - ./shared-backend:/app/shared-backend
+      - ./shared-frontend:/app/shared-frontend
+      - /app/node_modules
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - todo-network
+    command: npm start
+
+  todo-mvvm:
+    build:
+      context: ./ToDo-MVVM
+      dockerfile: ../Dockerfile.node
+    container_name: todo-mvvm
+    restart: always
+    ports:
+      - "3001:3001"
+    environment:
+      DB_NAME: todo_app
+      DB_USER: root
+      DB_PASS: root123
+      DB_HOST: mysql
+      PORT: 3001
+    volumes:
+      - ./ToDo-MVVM:/app
+      - ./shared-backend:/app/shared-backend
+      - ./shared-frontend:/app/shared-frontend
+      - /app/node_modules
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - todo-network
+    command: npm start
+
+  todo-mvp:
+    build:
+      context: ./ToDo-MVP
+      dockerfile: ../Dockerfile.node
+    container_name: todo-mvp
+    restart: always
+    ports:
+      - "3002:3002"
+    environment:
+      DB_NAME: todo_app
+      DB_USER: root
+      DB_PASS: root123
+      DB_HOST: mysql
+      PORT: 3002
+    volumes:
+      - ./ToDo-MVP:/app
+      - ./shared-backend:/app/shared-backend
+      - ./shared-frontend:/app/shared-frontend
+      - /app/node_modules
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - todo-network
+    command: npm start
+
+networks:
+  todo-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
